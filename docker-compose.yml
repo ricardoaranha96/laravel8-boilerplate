@@ -1,0 +1,33 @@
+# For more information: https://laravel.com/docs/sail
+version: '3.5'
+services:
+    laravel:
+        build: 
+            context: .
+            dockerfile: Dockerfile
+        ports:
+            - '${APP_PORT:-81}:80'
+        volumes:
+            - '.:/var/www'
+        depends_on:
+            - pgsql
+        networks:
+            - ibs-mobills
+    pgsql:
+        image: 'postgres:12.11'
+        ports:
+            - '${FORWARD_DB_PORT:-5432}:5432'
+        environment:                        
+            POSTGRES_DB: '${DB_DATABASE}'
+            POSTGRES_USER: '${DB_USERNAME}'
+            POSTGRES_PASSWORD: '${DB_PASSWORD}'            
+        volumes:
+            - 'postgres:/data/postgres'        
+        networks:
+            - ibs-mobills    
+volumes:
+    postgres:
+        driver: local
+networks:
+    ibs-mobills:
+        name: ibs-mobills
